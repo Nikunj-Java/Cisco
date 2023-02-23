@@ -15,7 +15,7 @@ STEP:2 CONNECT WITH MOBA X-TERM
 > open moba x-term and right click and hit enter
 
 ************************************************************
-STEP: DOCKER INSTALLTION ON UBUNTU OS
+STEP:3 DOCKER INSTALLTION ON UBUNTU OS
 ************************************************************
 goto>GOOGLE>DOKCER INSTALLTION ON UBUNTU
 ------------------------------------------------------------
