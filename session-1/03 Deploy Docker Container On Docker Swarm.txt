@@ -1,0 +1,54 @@
+***************************************************************
+DEPLOY DOCKERCONTAINER ON DOCKER SWARM
+***************************************************************
+
+	WE HAVE ALREADY PREPARED ONE IMAGE 'myimage2023' pulled from github and pushed iit to docker hub registry
+
+continue....
+
+------------------------------------------------------------------
+
+docker swarm: managing multiple containers running on different host
+where we will initiate a swarm that node will become the leader (Master) and another can join this node and you can use this as worker node
+
+
+to set the permission
+
+> sudo chmod 666 /var/run/docker.sock
+
+STEP:1 INITIATE DOCKER SWARM
+---------------------------------------
+> sudo docker swarm init (machine will become leader node)
+
+output: 
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-4cv1anfyv3qqffznv5e4bcx85bsahz413hnoeqoqz                                             e6b2yxa3g-e8xrkhd053pobyoekwnigjj7i 172.31.59.27:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow                                              the instructions.
+
+--------------------------------------------
+STEP:2 CREATE SERVICE IN THIS DOCKER SWARM
+--------------------------------------------
+> sudo docker service create -p 80:80 --name myservice myimage2023
+
+output: verify: Service converged
+
+> curl local host( you will see index.php file on docker_master )
+
+
+---------------------------------------------------
+STEP:3 SCALE THE DOCKER CONTAINER ON DOCKER SWARM
+---------------------------------------------------
+
+> docker service ps myservice
+
+
+HOW TO SCALE THE SERVICE?
+---------------------------
+
+	> docker service scale myservice=3
+	> docker service ls
+	> docker service ps myservice
+
