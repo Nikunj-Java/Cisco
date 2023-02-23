@@ -1,0 +1,161 @@
+
+************************************************************************************
+STEP:1 AWS EC2 UBUNTU INSTANCE
+************************************************************************************
+> create 2 AWS UBUNTU INSTANCE
+> make one as MASTER and another as WORKER
+> copy private ip address of MASTERNODE and WORKERNODE
+
+************************************************************************************
+STEP:2 INSTAL DOCKER IN BOTH INSTANCE
+************************************************************************************
+> sudo apt-get update
+> sudo apt-get install ca-certificates curl gnupg lsb-release
+
+> sudo mkdir -m 0755 -p /etc/apt/keyrings 
+> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+> echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+> sudo apt-get update
+
+> sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+1. TO VERIFY THE INSTALLTION
+-----------------------------------
+
+> sudo docker -v
+	output: Docker version 23.0.1, build a5ee5b1
+
+
+
+************************************************************************************
+STEP:3 EDIT /etc/host file to define master node and worker node's ip address
+************************************************************************************
+
+For MASTERNODE:
+----------------------
+> sudo vi /etc/hosts
+
+> press 'i'
+
+> copy_master_node_private_ip_address  master
+
+> press 'esc'
+
+> :wq!
+
+> ping master
+
+if ping is working that means all is going right
+press 'ctr+c' to stop the ping
+
+
+For WORKERNODE:
+----------------------
+> sudo vi /etc/hosts
+
+> press 'i'
+
+> copy_worker_node_private_ip_address  worker
+
+> press 'esc'
+
+> :wq!
+
+> ping worker
+
+if ping is working that means all is going right
+
+press 'ctr+c' to stop the ping
+
+
+************************************************************************************
+STEP:4 SWARM INITIALIZATION IN MASTER NODE
+************************************************************************************
+
+EG: sudo docker swarm init -- advertise-adr <IP ADDRESS OF MASTER NODE>
+
+>sudo docker swarm init -- advertise master
+
+or 
+
+> sudo docker swarm init -- advertise 172.31.51.79
+
+But if you are getting any error just follow the below steps
+
+> sudo docker swarm init
+
+
+[Note: 
+1. after successfull attempt you will get one token for connection with worker node
+2. copy that token and paste it to worker node by adding prefix 'sudo' <your token>
+]
+
+
+mytoken:
+---------
+
+
+Swarm initialized: current node (5rknbocwz0qrewi63eokmu99m) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-3kcejp2htx89hsstkuufh2is7k05m7ip2wu2x8g8qcpl50kovd-8xpkpq5atolnjddybdj7iu7d6 172.31.51.79:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+to run the token
+
+eg: sudo docker swarm join --token SWMTKN-1-3kcejp2htx89hsstkuufh2is7k05m7ip2wu2x8g8qcpl50kovd-8xpkpq5atolnjddybdj7iu7d6 172.31.51.79:2377
+
+
+
+goto> worker node
+
+run the token
+
+>sudo docker swarm join --token SWMTKN-1-3kcejp2htx89hsstkuufh2is7k05m7ip2wu2x8g8qcpl50kovd-8xpkpq5atolnjddybdj7iu7d6 172.31.51.79:2377
+
+goto> masternode
+
+>sudo docker node ls
+
+once the worker node will join the swarm you will see the two names in the list
+
+************************************************************************************
+STEP:5 SERVICE WITH REPLICAS
+************************************************************************************
+
+----------------------------------------------------------------------
+PULL GIT HUB IMAGES (CUSTOM IMAGES)
+----------------------------------------------------------------------
+LINK: https://github.com/Nikunj-Java/docker_master.git
+
+> git clone https://github.com/Nikunj-Java/docker_master.git
+
+> ls (to check available folders)
+> cd docker_master
+
+
+1. LET'S PREPARE THE IMAGE IN DOCKER CONTAINER
+-----------------------------------------------
+> sudo docker build -t myimage2023 . (. is mendatory)
+> sudo docker images (to check the image is prepared or not?)
+
+
+2. LET'S RUN THE IMAGE IN A CONTAINER 
+-----------------------------------------------
+> sudo docker run -d --name mycontainer -p 80:80 myimage2023
+
+(this will run myimage2023 on port no 80 and container name is mycontainer
+
+------------------------------------------------------------------------------------
+
+> sudo docker service create --name myclusterdemo1 --publish 8081:8081 --replicas 2 myimage2023
+
+
+ 
+> sudo docker service ps myclusterdemo1
+
