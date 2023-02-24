@@ -1,0 +1,129 @@
+*******************************************************************
+JENKINS WITH DOCKER
+*******************************************************************
+
+STEP:1 CREATE AWS UBUNTU INSTANCE WITH PORT NO:8080
+
+STEP:2 INSTALL DOCKER
+
+STEP:3 INSTALL JDK
+ 
+STEP:4 INSTALL MAVEN
+
+STEP:5 INSTALL JENKINS
+
+
+*******************************************************************
+STEP:1 CREATE AWS UBUNTU INSTANCE WITH PORT NO:8080
+*******************************************************************
+> prepare AWS INSTANCE (Ubuntu Server 22.04 LTS(HVM) ,SSD Volume Type)
+> Security :add port no:8080 with custom tcp rule
+> Download .pem key and connect using moba x-term
+
+open moba x-term
+> cd d:
+> cd phase-5
+
+>goto aws>instance>yourinstance>connect>ssh>copy example key
+
+
+open moba x-term and paste it
+
+***********************************************************************
+STEP:2 INSTALL DOCKER ON UBUNTU OS
+***********************************************************************
+
+> sudo apt-get update
+> sudo apt-get install ca-certificates curl gnupg lsb-release
+
+> sudo mkdir -m 0755 -p /etc/apt/keyrings 
+> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+> echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+> sudo apt-get update
+
+> sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+1. TO VERIFY THE INSTALLTION
+-----------------------------------
+
+> sudo docker -v
+	output: Docker version 23.0.1, 
+
+***********************************************************************
+STEP:3 INSTALL JDK
+***********************************************************************
+> sudo apt-get update
+> sudo apt install default-jdk -
+
+to verify the installtion
+> java --version
+
+***********************************************************************
+STEP:4 INSTALL MAVEN
+***********************************************************************
+> sudo apt-get update
+> sudo apt install maven -y
+
+***********************************************************************
+STEP:5 INSTALL JENKINS
+***********************************************************************
+GOTO>GOOGLE>HOW TO DOWNLOAD JENKINS IN UBUNTU
+link: https://www.jenkins.io/doc/book/installing/linux/
+------------------------------------------------------------------------
+
+> curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+> echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+> sudo apt-get update
+> sudo apt-get install jenkins
+
+
+1. TO START WITH JENKINS
+------------------------------------
+
+
+> sudo service jenkins start
+> sudo service jenkins status
+
+CONNECT: goto>AWS>EC2>copy Public Ip Address:8080 on browser and hit enter
+
+
+2. TO GENERATE SECRET PASSWORD
+-------------------------------------
+> sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+3. TO GIVE PERMISSION FOR ALL
+-------------------------------------
+
+> sudo chmod 777 /var/run/docker.sock
+
+
+
+3. FOR INITIAL CREDENTIALS
+--------------------------------------
+
+1. CLICK ON INSTALL SUGGESTED PLUGINS
+2. PROVIDE YOUR CREDENTIALS
+3. WELCOME TO JENKINS
+4. MANAGE PLUGINS>MAVEN INTEGRATION>CLICK ON INSTALL WITHOUT RESTART
+5  GOTO>DASHBOARD>craete >new job>select free style project>give name>click ok
+6. give description
+7. sourcecode management 
+	GIT:
+	URL:
+	BRANCHES TO BUILD: */master or */main
+8. Build Trigger
+	POLL SCM:
+	H/2 * * * *
+9. CLICK ON APPLY AND SAVE
+
+10. BUILD  THE PROJECT
+
+
+
+
