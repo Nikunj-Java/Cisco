@@ -115,7 +115,7 @@ CONNECT: goto>AWS>EC2>copy Public Ip Address:8080 on browser and hit enter
 6. give description
 7. sourcecode management 
 	GIT:
-	URL:
+	URL:https://github.com/Nikunj-Java/docker_master.git
 	BRANCHES TO BUILD: */master or */main
 8. Build Trigger
 	POLL SCM:
