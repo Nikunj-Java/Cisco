@@ -88,8 +88,6 @@ once the file updated we need to  restart the service
 you will  get message like this
 -----------------------------------
  Cgroup Driver: systemd
- Cgroup Version: 2
- cgroupns
 
 ------------------------------------
 
@@ -110,17 +108,22 @@ if  all will be okyou  will get message that
 also you will get some set of commands in CLI as below
 -------------------------------------------------------
 
+ Your Kubernetes control-plane has initialized successfully!
+
 To start using your cluster, you need to run the following as a regular user:
 
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.31.87.163:6443 --token np7vaz.895o0ejc3hh25y2l \
-        --discovery-token-ca-cert-hash sha256:b827a4d14e237077c948d4fa681a61f1ea9397398fe139d96715d1afe85b06ba
+kubeadm join 172.31.21.19:6443 --token rkda24.6y3m5qgzu8blb9ta \
+    --discovery-token-ca-cert-hash sha256:6caedda5f4b5c10d2c8329933ab60e43799a2bd15fa5c53ad755182bffef7f82
 
 [notes: to  prepare worker  node  follow  STEP-1 TO STEP-5 AND then copy paste the token  on worker node with 'sudo your_token ]
 
@@ -139,7 +142,9 @@ executes all the commands line by line
 let's deploy weve network to cluster
 
 > export kubever=$(kubectl version | base64 | tr -d '\n')
-> kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever"
+> kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
+	output: daemonset.apps/weave-net configured
 
 4. validate running pods
 
@@ -154,6 +159,8 @@ FOR SPRINGBOOT APPLICATION
 2. JDK INSTALLATION
 3. CLONE YOUR APP FROM GITHUB
 
+[if you are using lab skip Step-1 and Step-2,Jump to Step-3]
+
 1. MAVEN INSTALLTION
 -------------------------------
 >  sudo apt-get update
@@ -163,6 +170,7 @@ FOR SPRINGBOOT APPLICATION
 -------------------------------
 > sudo apt-get update
 > sudo apt install default-jdk -y
+
 
 3. CLONE YOUR APP
 
@@ -174,32 +182,35 @@ FOR SPRINGBOOT APPLICATION
 
 5. CREATE JAR FILE
 > mvn clean install
+> java -jar target/demo-docker-0.0.1-SNAPSHOT.jar
+
+PRESS CTR+C TO STOP
 
 
 5.BUILD DOCKER IMAGE
 
-> sudo docker build -t springboot .
+> sudo docker build -t springboot2023 .
 > sudo docker images
 
 6. CUBE PROXY
-> kubectl run springbootapp --image=springboot --port=8082
+> kubectl run springbootapp --image=springboot2023 --port=8082
 
-you will get msg that: pod/springbootapp created
+you will get msg that: pod/springboot2023 created
 
 > kubectl get pods
 
 7.CREATE DEPLOYMENT SERVICE
 
->kubectl expose pod/springbootapp --port=8082 --target-port=8082 --type=LoadBalancer
+>kubectl expose pod/springbootapp2023 --port=8082 --target-port=8082 --type=LoadBalancer
 
 
-you will  get message that : service/springbootapp exposed
+you will  get message that : service/springbootapp2023 exposed
 
-1. TO GET LIST OFSERVICES RUNNING
+1. TO GET LIST OF SERVICES RUNNING
 ----------------------------------
 > kubectl get service
 
 2.TO GET DETAILED DESCRIPTION OF APP RUNNING ON POD
 ---------------------------------------------------
-> kubectl describe svc springbootapp
+> kubectl describe svc springbootapp2023
 
